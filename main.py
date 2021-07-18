@@ -8,7 +8,7 @@ import ast
 text_file = str(sys.argv[1])
 
 
-def calculate(matrix: list, row: int, column: int) -> bool:
+def crater_finder(matrix: list, row: int, column: int) -> bool:
     """Функция, которая ищет в переданной матрице кратеры, проходясь по её элементам."""
     if len(matrix) == 0:
         return False
@@ -19,24 +19,24 @@ def calculate(matrix: list, row: int, column: int) -> bool:
     if matrix[row][column] == 1:
         matrix[row][column] = 0
         #  Двигаемся вверх.
-        calculate(matrix, row + 1, column)
+        crater_finder(matrix, row + 1, column)
         #  Двигаемся вниз.
-        calculate(matrix, row - 1, column)
+        crater_finder(matrix, row - 1, column)
         #  Двигаемся вправо.
-        calculate(matrix, row, column + 1)
+        crater_finder(matrix, row, column + 1)
         #  Двигаемся влево.
-        calculate(matrix, row, column - 1)
+        crater_finder(matrix, row, column - 1)
         return True
     return False
 
 
-def crater_counter_function(matrix: list) -> int:
+def calculate(matrix: list) -> int:
     """Функция - счетчик, которая подсчитывает количество кратеров."""
     """Использует данные, полученные в результате исполнения функции calculate()."""
     number_of_craters = 0
     for row in range(len(matrix)):
         for column in range(len(matrix[row])):
-            if calculate(matrix, row, column):
+            if crater_finder(matrix, row, column):
                 number_of_craters += 1
     return number_of_craters
 
@@ -45,7 +45,7 @@ def file_to_array(path_to_file: str) -> int:
     """Функция, преобразовывающая строки, прочитанные из файла, в матрицу, и передающая ее дальше для расчетов."""
     with open(path_to_file, "r") as f:
         moon_matrix = ast.literal_eval(f.read())
-        return crater_counter_function(moon_matrix)
+        return calculate(moon_matrix)
 
 
 if __name__ == "__main__":
