@@ -1,7 +1,5 @@
-
 """Часть проекта по сканированию луны - подсчет количества лунных кратеров."""
 
-import os
 import sys
 import ast
 
@@ -16,20 +14,25 @@ def calculate(matrix: list, row: int, column: int) -> bool:
         return False
     if row < 0 or column < 0:
         return False
-    if row > len(matrix) - 1 or column > len(matrix[0]) - 1:
+    if row > len(matrix) - 1 or column > len(matrix[row]) - 1:
         return False
     if matrix[row][column] == 1:
         matrix[row][column] = 0
+        #  Двигаемся вверх.
         calculate(matrix, row + 1, column)
+        #  Двигаемся вниз.
         calculate(matrix, row - 1, column)
+        #  Двигаемся вправо.
         calculate(matrix, row, column + 1)
+        #  Двигаемся влево.
         calculate(matrix, row, column - 1)
         return True
+    return False
 
 
 def crater_counter_function(matrix: list) -> int:
-    if not matrix:
-        return 0
+    """Функция - счетчик, которая подсчитывает количество кратеров."""
+    """Использует данные, полученные в результате исполнения функции calculate()."""
     number_of_craters = 0
     for row in range(len(matrix)):
         for column in range(len(matrix[row])):
@@ -39,11 +42,9 @@ def crater_counter_function(matrix: list) -> int:
 
 
 def file_to_array(path_to_file: str) -> int:
+    """Функция, преобразовывающая строки, прочитанные из файла, в матрицу, и передающая ее дальше для расчетов."""
     with open(path_to_file, "r") as f:
-        try:
-            moon_matrix = ast.literal_eval(f.read())
-        except SyntaxError:
-            return "Пустой файл!"
+        moon_matrix = ast.literal_eval(f.read())
         return crater_counter_function(moon_matrix)
 
 
