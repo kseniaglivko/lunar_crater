@@ -1,7 +1,9 @@
+
 """Часть проекта по сканированию луны - подсчет количества лунных кратеров."""
 
+import os
 import sys
-import numpy
+import ast
 
 
 """Передаем введенный через консоль путь до файла в переменную"""
@@ -16,32 +18,34 @@ def calculate(matrix: list, row: int, column: int) -> bool:
         return False
     if row > len(matrix) - 1 or column > len(matrix[0]) - 1:
         return False
-#    matrix[row][column] = 0
-    calculate(matrix, row + 1, column)
-    calculate(matrix, row - 1, column)
-    calculate(matrix, row, column + 1)
-    calculate(matrix, row, column - 1)
-    return True
+    if matrix[row][column] == 1:
+        matrix[row][column] = 0
+        calculate(matrix, row + 1, column)
+        calculate(matrix, row - 1, column)
+        calculate(matrix, row, column + 1)
+        calculate(matrix, row, column - 1)
+        return True
 
 
-def crater_counter_function(matrix) -> int:
+def crater_counter_function(matrix: list) -> int:
     if not matrix:
         return 0
     number_of_craters = 0
     for row in range(len(matrix)):
-        for column in range(len(matrix[0])):
-            if matrix[row][column] == 1:
+        for column in range(len(matrix[row])):
+            if calculate(matrix, row, column):
                 number_of_craters += 1
-                calculate(matrix, row, column)
-            return number_of_craters
+    return number_of_craters
 
 
-def file_to_array(path_to_file) -> None:
+def file_to_array(path_to_file: str) -> int:
     with open(path_to_file, "r") as f:
-        moon_matrix = f.read()
-        input_data = numpy.array(moon_matrix)
-        crater_counter_function(input_data)
+        try:
+            moon_matrix = ast.literal_eval(f.read())
+        except SyntaxError:
+            return "Пустой файл!"
+        return crater_counter_function(moon_matrix)
 
 
 if __name__ == "__main__":
-    print(crater_counter_function(text_file))
+    print(file_to_array(text_file))
